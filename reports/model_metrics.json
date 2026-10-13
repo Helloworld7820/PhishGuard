@@ -1,0 +1,186 @@
+{
+  "model_version": "2.0.0",
+  "model_type": "RandomForestClassifier",
+  "trained_at": "2026-10-13T16:45:31.569445+00:00",
+  "hyperparameters": {
+    "n_estimators": 200,
+    "max_depth": 12,
+    "random_state": 42,
+    "class_weight": "balanced",
+    "n_jobs": -1
+  },
+  "feature_names": [
+    "url_length",
+    "domain_length",
+    "dot_count",
+    "hyphen_count",
+    "subdomain_count",
+    "digit_count",
+    "has_at_symbol",
+    "has_ip_address",
+    "is_https",
+    "suspicious_keyword_count",
+    "is_shortened",
+    "slash_count",
+    "query_param_count",
+    "has_suspicious_port",
+    "has_percent_encoding",
+    "hyphen_in_domain"
+  ],
+  "dataset_statistics": {
+    "total_samples": 1349,
+    "phishing_samples": 662,
+    "legitimate_samples": 687,
+    "train_samples": 1079,
+    "test_samples": 270,
+    "test_ratio": 0.2,
+    "is_synthetic": true,
+    "dataset_provenance": "synthetic_demonstration_v2"
+  },
+  "primary_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0,
+    "confusion_matrix": {
+      "true_negative": 138,
+      "false_positive": 0,
+      "false_negative": 0,
+      "true_positive": 132,
+      "matrix_array": [
+        [
+          138,
+          0
+        ],
+        [
+          0,
+          132
+        ]
+      ]
+    },
+    "classification_report": {
+      "0": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 138.0
+      },
+      "1": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 132.0
+      },
+      "accuracy": 1.0,
+      "macro avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 270.0
+      },
+      "weighted avg": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1-score": 1.0,
+        "support": 270.0
+      }
+    }
+  },
+  "model_comparison": {
+    "Random Forest (Selected)": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "Gradient Boosting (HistGB)": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "Decision Tree": {
+      "accuracy": 0.9963,
+      "precision": 0.9925,
+      "recall": 1.0,
+      "f1_score": 0.9962
+    },
+    "Logistic Regression": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    }
+  },
+  "feature_importance": [
+    {
+      "feature": "is_https",
+      "importance": 0.3762
+    },
+    {
+      "feature": "suspicious_keyword_count",
+      "importance": 0.2335
+    },
+    {
+      "feature": "hyphen_in_domain",
+      "importance": 0.1137
+    },
+    {
+      "feature": "digit_count",
+      "importance": 0.0921
+    },
+    {
+      "feature": "domain_length",
+      "importance": 0.049
+    },
+    {
+      "feature": "query_param_count",
+      "importance": 0.0288
+    },
+    {
+      "feature": "has_ip_address",
+      "importance": 0.0243
+    },
+    {
+      "feature": "dot_count",
+      "importance": 0.0229
+    },
+    {
+      "feature": "hyphen_count",
+      "importance": 0.0226
+    },
+    {
+      "feature": "url_length",
+      "importance": 0.0097
+    },
+    {
+      "feature": "is_shortened",
+      "importance": 0.0082
+    },
+    {
+      "feature": "has_percent_encoding",
+      "importance": 0.0068
+    },
+    {
+      "feature": "slash_count",
+      "importance": 0.0055
+    },
+    {
+      "feature": "subdomain_count",
+      "importance": 0.0049
+    },
+    {
+      "feature": "has_suspicious_port",
+      "importance": 0.0009
+    },
+    {
+      "feature": "has_at_symbol",
+      "importance": 0.0008
+    }
+  ],
+  "metric_explanations": {
+    "recall_note": "Recall measures the proportion of actual phishing URLs correctly caught. In cybersecurity, high recall minimizes dangerous false negatives (undetected phishing).",
+    "precision_note": "Precision measures the proportion of flagged URLs that are truly phishing. High precision prevents alert fatigue and unnecessary disruption to legitimate web browsing.",
+    "synthetic_disclaimer": "Metrics are computed on the designated offline test set. If synthetic demonstration data is used, scores reflect pattern discrimination capability on synthesized samples and are not representative of live in-the-wild threat environments."
+  }
+}

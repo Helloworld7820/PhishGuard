@@ -1,0 +1,34 @@
+{
+  "model_version": "2.0.0",
+  "algorithm": "RandomForestClassifier",
+  "registered_at": "2026-10-13T16:45:31.698281+00:00",
+  "artifact_path": "C:\\Users\\user\\OneDrive\\Desktop\\Phishguard\\models\\phishguard_rf_model.joblib",
+  "artifact_hash": "185dc1f5e1f965ffb9295998223050796fe0f459b727361c58ddb3cab52bba5e",
+  "feature_schema": [
+    "url_length",
+    "domain_length",
+    "dot_count",
+    "hyphen_count",
+    "subdomain_count",
+    "digit_count",
+    "has_at_symbol",
+    "has_ip_address",
+    "is_https",
+    "suspicious_keyword_count",
+    "is_shortened",
+    "slash_count",
+    "query_param_count",
+    "has_suspicious_port",
+    "has_percent_encoding",
+    "hyphen_in_domain"
+  ],
+  "feature_count": 16,
+  "dataset_provenance": "synthetic_demonstration_v2",
+  "validation_passed": true,
+  "summary_metrics": {
+    "accuracy": 1.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1_score": 1.0
+  }
+}

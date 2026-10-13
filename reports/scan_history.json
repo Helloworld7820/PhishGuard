@@ -1,0 +1,86 @@
+[
+  {
+    "url": "http://192.168.1.105/login/banking/update",
+    "verdict": "PHISHING DETECTED",
+    "risk_score": 81.5,
+    "status_color": "danger",
+    "timestamp": "2026-10-13T17:10:10.720917+00:00"
+  },
+  {
+    "url": "https://en.wikipedia.org/wiki/Computer_security",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 0.0,
+    "status_color": "success",
+    "timestamp": "2026-10-13T17:10:02.108017+00:00"
+  },
+  {
+    "url": "http://paypal-account-security-update22.xyz/signin/verify.php",
+    "verdict": "PHISHING DETECTED",
+    "risk_score": 100.0,
+    "status_color": "danger",
+    "timestamp": "2026-10-13T17:09:55.241918+00:00"
+  },
+  {
+    "url": "http://serviciosbys.com/paypal.cgi.bin.get-into.herf.secure.dispatch35463256rzr321654641dsf654321874/href/h...",
+    "verdict": "PHISHING DETECTED",
+    "risk_score": 85.0,
+    "status_color": "danger",
+    "timestamp": "2026-10-13T17:09:02.760686+00:00"
+  },
+  {
+    "url": "http://nobell.it/70ffb52d079109dca5664cce6f317373782/login.SkyPe.com/en/cgi-bin/verification/login/70ffb52d...",
+    "verdict": "SUSPICIOUS",
+    "risk_score": 70.0,
+    "status_color": "warning",
+    "timestamp": "2026-10-13T17:08:09.914146+00:00"
+  },
+  {
+    "url": "http://serviciosbys.com/paypal.cgi.bin.get-into.herf.secure.dispatch35463256rzr321654641dsf654321874/href/h...",
+    "verdict": "PHISHING DETECTED",
+    "risk_score": 85.0,
+    "status_color": "danger",
+    "timestamp": "2026-10-13T16:55:38.212192+00:00"
+  },
+  {
+    "url": "http://www.dghjdgf.com/paypal.co.uk/cycgi-bin/webscrcmd=_home-customer&nav=1/loading.php",
+    "verdict": "SUSPICIOUS",
+    "risk_score": 50.5,
+    "status_color": "warning",
+    "timestamp": "2026-10-13T16:55:03.405664+00:00"
+  },
+  {
+    "url": "http://smilesvoegol.servebbs.org/voegol.php",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 8.5,
+    "status_color": "success",
+    "timestamp": "2026-10-13T16:54:17.682831+00:00"
+  },
+  {
+    "url": "http://htts:/ww.youtube.com",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 3.0,
+    "status_color": "success",
+    "timestamp": "2026-10-13T16:51:31.604265+00:00"
+  },
+  {
+    "url": "ht://www.youtube.com/",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 1.0,
+    "status_color": "success",
+    "timestamp": "2026-10-13T16:50:24.827710+00:00"
+  },
+  {
+    "url": "http://www.youtube.com/",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 1.0,
+    "status_color": "success",
+    "timestamp": "2026-10-13T16:49:06.195181+00:00"
+  },
+  {
+    "url": "https://www.youtube.com/",
+    "verdict": "NO KNOWN THREAT DETECTED",
+    "risk_score": 0.0,
+    "status_color": "success",
+    "timestamp": "2026-10-13T16:48:12.565475+00:00"
+  }
+]

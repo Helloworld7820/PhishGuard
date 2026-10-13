@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}PhishGuard — Intelligent Phishing URL Scanner{% endblock %}
+
+{% block content %}
+<div class="hero-section py-5 position-relative overflow-hidden">
+    <!-- Ambient Cyber Glows -->
+    <div class="cyber-glow-bg top-left"></div>
+    <div class="cyber-glow-bg bottom-right"></div>
+
+    <div class="container py-lg-4 position-relative">
+        <!-- Hero Header -->
+        <div class="text-center max-w-750 mx-auto mb-5">
+            <div class="inline-badge mb-3">
+                <i class="bi bi-shield-shaded text-cyan me-1"></i> Random Forest Classifiers • URL Structural Heuristics
+            </div>
+            <h1 class="display-4 fw-extrabold tracking-tight hero-heading mb-3">
+                Detect Phishing <span class="gradient-text">Before It Tricks You</span>
+            </h1>
+            <p class="lead text-muted-light fs-6 mb-4">
+                PhishGuard inspects URL syntax, lexical tokens, and domain characteristics using machine learning to evaluate deception risks in milliseconds — without ever visiting or pinging the destination server.
+            </p>
+        </div>
+
+        <!-- Scanner Card -->
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="cyber-card scanner-card p-4 p-md-5">
+                    {% if error_message %}
+                    <div class="alert alert-danger-cyber d-flex align-items-center mb-4" role="alert">
+                        <i class="bi bi-exclamation-octagon-fill fs-5 me-2 text-danger"></i>
+                        <div>{{ error_message }}</div>
+                    </div>
+                    {% endif %}
+
+                    <form id="scannerForm" action="{{ url_for('analyze_form') }}" method="POST" novalidate>
+                        <div class="mb-3">
+                            <label for="urlInput" class="form-label text-xs fw-semibold text-uppercase tracking-wider text-muted-light">
+                                Target Web Address (URL)
+                            </label>
+                            <div class="input-group cyber-input-group">
+                                <span class="input-group-text cyber-addon">
+                                    <i class="bi bi-link-45deg fs-4 text-cyan"></i>
+                                </span>
+                                <input type="text"
+                                       class="form-control cyber-input py-3"
+                                       id="urlInput"
+                                       name="url"
+                                       placeholder="https://example.com"
+                                       autocomplete="off"
+                                       spellcheck="false"
+                                       required>
+                                <button class="btn btn-cyber-primary px-4 d-flex align-items-center gap-2"
+                                        type="submit"
+                                        id="analyzeBtn">
+                                    <span class="btn-text">Analyze URL</span>
+                                    <i class="bi bi-arrow-right btn-icon"></i>
+                                    <span class="spinner-border spinner-border-sm d-none" id="btnSpinner" role="status" aria-hidden="true"></span>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback d-none text-danger mt-2" id="clientValidationMsg">
+                                <i class="bi bi-info-circle me-1"></i> Please enter a valid URL (e.g., https://example.com).
+                            </div>
+                        </div>
+
+                        <!-- Sample URL Buttons -->
+                        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-2 border-top border-cyber-dim">
+                            <span class="text-xs text-muted-dim fw-semibold me-1">Try Samples:</span>
+                            <button type="button" class="btn btn-sample btn-sm" id="sampleLegitBtn" data-url="https://en.wikipedia.org/wiki/Computer_security">
+                                <i class="bi bi-check-circle text-success me-1"></i> Wikipedia (Legitimate)
+                            </button>
+                            <button type="button" class="btn btn-sample btn-sm" id="samplePhishBtn" data-url="http://paypal-account-security-update22.xyz/signin/verify.php">
+                                <i class="bi bi-exclamation-triangle text-danger me-1"></i> Synthetic Phishing Sample
+                            </button>
+                            <button type="button" class="btn btn-sample btn-sm" id="sampleIpBtn" data-url="http://192.168.1.105/login/banking/update">
+                                <i class="bi bi-hdd-network text-warning me-1"></i> Raw IP Address Sample
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Trust & Privacy Signals -->
+                    <div class="row g-3 mt-4 pt-3 border-top border-cyber-dim">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-eye-slash-fill text-cyan fs-5 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <h6 class="text-xs fw-bold mb-1 text-light">Zero-Network Privacy</h6>
+                                    <p class="text-2xs text-muted-dim mb-0">
+                                        Submitted links are evaluated syntactically. Our engine will never contact, ping, or download content from target servers.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start gap-2">
+                                <i class="bi bi-shield-exclamation text-warning fs-5 flex-shrink-0 mt-1"></i>
+                                <div>
+                                    <h6 class="text-xs fw-bold mb-1 text-light">Estimation Disclaimer</h6>
+                                    <p class="text-2xs text-muted-dim mb-0">
+                                        Predictions reflect statistical likelihoods from URL features. No model guarantees 100% precision. Never ignore standard safety practices.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- System Architecture Highlights -->
+        <div class="row g-4 mt-5">
+            <div class="col-md-4">
+                <div class="feature-card p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-cpu-fill text-cyan fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">16 Lexical Features</h5>
+                    <p class="text-muted-light text-sm mb-0">
+                        Evaluates entropy, subdomains, suspicious authentication keywords, IP hostnames, URL shorteners, and non-standard network ports.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-tree-fill text-success fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Random Forest Engine</h5>
+                    <p class="text-muted-light text-sm mb-0">
+                        An ensemble of 200 decision trees trained with balanced class weights to maximize detection recall while minimizing false alarms.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card p-4 h-100">
+                    <div class="feature-icon mb-3">
+                        <i class="bi bi-shield-shaded text-warning fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">Explainable Risk Scores</h5>
+                    <p class="text-muted-light text-sm mb-0">
+                        Delivers a calibrated 0–100 risk score paired with clear, human-readable indicator explanations highlighting why a link is anomalous.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

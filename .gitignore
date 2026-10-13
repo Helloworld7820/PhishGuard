@@ -1,0 +1,26 @@
+# Python Environment & Virtual Environments
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyd
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Operating System & IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+.env
+.env.*
+!.env.example
+
+# Model Artifacts (Optional: keep models in repo if required for college offline demo, or track them)
+# By default in college projects, keeping the trained .joblib and metrics.json allows instant out-of-the-box run.

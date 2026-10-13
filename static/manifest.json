@@ -1,0 +1,21 @@
+{
+  "name": "PhishGuard V2 — Phishing Detection System",
+  "short_name": "PhishGuard",
+  "description": "Evidence-based real-world phishing detection platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#060911",
+  "theme_color": "#0a0f1d",
+  "icons": [
+    {
+      "src": "/static/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/static/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

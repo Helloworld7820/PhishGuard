@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+
+{% block title %}Technical Architecture & Methodology — PhishGuard V2{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="max-w-850 mx-auto mb-5 text-center">
+        <div class="inline-badge mb-2">
+            <i class="bi bi-shield-check text-cyan me-1"></i> PhishGuard V2 Architecture &amp; Methodology
+        </div>
+        <h2 class="display-5 fw-extrabold tracking-tight mb-3">About <span class="gradient-text">PhishGuard V2</span></h2>
+        <p class="lead text-muted-light fs-6">
+            An advanced, multi-layer, evidence-based phishing detection platform combining offline lexical heuristics, real-world threat intelligence feeds, domain telemetry, and ensemble machine learning.
+        </p>
+    </div>
+
+    <div class="row g-4 max-w-950 mx-auto">
+        <!-- 1. Multi-Layer Detection Engine -->
+        <div class="col-12">
+            <div class="cyber-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="brand-icon-wrapper">
+                        <i class="bi bi-layers-fill text-cyan"></i>
+                    </span>
+                    <h4 class="fw-bold mb-0">1. Five-Layer Detection Engine Architecture</h4>
+                </div>
+                <p class="text-muted-light">
+                    PhishGuard V2 replaces monolithic single-model scoring with a defense-in-depth, five-layer evidence aggregation architecture:
+                </p>
+                <div class="row g-3 my-2">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-cyan fw-bold mb-1"><i class="bi bi-braces me-1"></i> Layer A: Advanced URL Analysis</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Leverages Public Suffix List (PSL) rules to extract true registered domains, decomposes subdomains, detects Punycode/homoglyphs, and flags brand-mimicking strings.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-success fw-bold mb-1"><i class="bi bi-broadcast me-1"></i> Layer B: Threat Intelligence</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Connects to Google Safe Browsing, PhishTank, OpenPhish feeds, and local threat signatures. Implements TTL caching, timeout controls, and rate-limit fallbacks.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-warning fw-bold mb-1"><i class="bi bi-patch-check me-1"></i> Layer C: Domain &amp; TLS Signals</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Safely checks DNS address resolution and TLS SNI certificate headers without downloading HTTP application content or following web redirects.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-cyan fw-bold mb-1"><i class="bi bi-cpu me-1"></i> Layer D: Real-World ML &amp; Registry</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                An ensemble Random Forest model validated through an artifact registry. Benchmarked against HistGradientBoosting, Decision Trees, and Logistic Regression.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyan h-100">
+                            <h6 class="text-light fw-bold mb-1"><i class="bi bi-shield-shaded text-cyan me-1"></i> Layer E: Evidence-Based Decision Engine</h6>
+                            <p class="text-2xs text-muted-light mb-0">
+                                Aggregates threat intelligence, model probabilities, structural heuristics, and domain telemetry to produce one of four standardized verdicts: <strong>PHISHING DETECTED</strong>, <strong>SUSPICIOUS</strong>, <strong>NO KNOWN THREAT DETECTED</strong>, or <strong>INCONCLUSIVE</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Safe Server Architecture (Zero SSRF Risk) -->
+        <div class="col-12">
+            <div class="cyber-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="brand-icon-wrapper">
+                        <i class="bi bi-shield-lock-fill text-success"></i>
+                    </span>
+                    <h4 class="fw-bold mb-0">2. Safe Server Architecture (Zero SSRF Risk)</h4>
+                </div>
+                <p class="text-muted-light">
+                    PhishGuard enforces a strict architectural boundary: <strong>The application server never makes HTTP requests to user-submitted target URLs.</strong>
+                </p>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-cyan fw-bold mb-1"><i class="bi bi-x-octagon me-1"></i> No HTML Crawling</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Eliminates drive-by malware downloads, malicious JavaScript execution, and browser exploit payloads on the host server.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-success fw-bold mb-1"><i class="bi bi-diagram-2 me-1"></i> Zero SSRF Surface</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Prevents Server-Side Request Forgery against cloud metadata APIs (e.g. 169.254.169.254), internal VPC services, and local loopbacks.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                            <h6 class="text-warning fw-bold mb-1"><i class="bi bi-speedometer2 me-1"></i> Millisecond Speed</h6>
+                            <p class="text-2xs text-muted-dim mb-0">
+                                Operates in sub-5 milliseconds for offline URL analysis without waiting for multi-second web page downloads.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Standardized Verdict Definitions -->
+        <div class="col-12">
+            <div class="cyber-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="brand-icon-wrapper">
+                        <i class="bi bi-ui-checks text-warning"></i>
+                    </span>
+                    <h4 class="fw-bold mb-0">3. Standardized Security Verdicts</h4>
+                </div>
+                <p class="text-muted-light">
+                    Unlike naive detectors that output simple binary true/false flags, PhishGuard V2 maps multi-source evidence into four transparent security states:
+                </p>
+                <ul class="list-unstyled text-sm text-muted-light mb-0">
+                    <li class="mb-3 p-2 rounded bg-cyber-darker border border-danger-subtle">
+                        <strong class="text-danger text-uppercase">PHISHING DETECTED:</strong>
+                        Confirmed match by active threat intelligence provider, or verified homoglyph/brand deception supported by high model probability.
+                    </li>
+                    <li class="mb-3 p-2 rounded bg-cyber-darker border border-warning-subtle">
+                        <strong class="text-warning text-uppercase">SUSPICIOUS:</strong>
+                        Elevated risk observed (e.g. high-risk indicators, brand terms in subdomains, or elevated model score), but lacking confirmed threat intelligence match.
+                    </li>
+                    <li class="mb-3 p-2 rounded bg-cyber-darker border border-success-subtle">
+                        <strong class="text-success text-uppercase">NO KNOWN THREAT DETECTED:</strong>
+                        Available threat intelligence feeds and lexical models find no threat indicators. <em>Explicitly declared as NOT an absolute guarantee of safety.</em>
+                    </li>
+                    <li class="p-2 rounded bg-cyber-darker border border-secondary-subtle">
+                        <strong class="text-secondary text-uppercase">INCONCLUSIVE:</strong>
+                        Evidence is insufficient, contradictory, or malformed. Returned when domain does not resolve or signals are inconclusive, avoiding false certainty.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 4. Privacy & Scan Telemetry -->
+        <div class="col-12">
+            <div class="cyber-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="brand-icon-wrapper">
+                        <i class="bi bi-shield-shaded text-cyan"></i>
+                    </span>
+                    <h4 class="fw-bold mb-0">4. Privacy Protection &amp; Scan History</h4>
+                </div>
+                <p class="text-muted-light">
+                    PhishGuard V2 includes built-in privacy safeguards:
+                </p>
+                <ul class="text-muted-light text-sm ps-3 mb-0">
+                    <li class="mb-2"><strong>Credential &amp; Token Redaction:</strong> Embedded passwords, basic auth, and sensitive query tokens (e.g. <code>token</code>, <code>auth</code>, <code>key</code>, <code>password</code>) are scrubbed before storage.</li>
+                    <li class="mb-2"><strong>Zero Third-Party Leaks:</strong> Scan history is stored locally in JSON format with strict retention limits and can be wiped instantly via the dashboard.</li>
+                    <li class="mb-0"><strong>Hashed Threat Cache:</strong> External threat intelligence lookups use SHA-256 hashes for disk caching, preventing plaintext URL exposure.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 5. Technology Stack -->
+        <div class="col-12">
+            <div class="cyber-card p-4 p-md-5">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <span class="brand-icon-wrapper">
+                        <i class="bi bi-stack text-cyan"></i>
+                    </span>
+                    <h4 class="fw-bold mb-0">5. Technology Stack</h4>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-sm text-muted-light mb-0">
+                            <li class="mb-2"><strong class="text-light">Backend:</strong> Python 3.11+, Flask Web Microframework</li>
+                            <li class="mb-2"><strong class="text-light">Machine Learning:</strong> scikit-learn (Random Forest, HistGradientBoosting, Decision Tree, Logistic Regression)</li>
+                            <li class="mb-2"><strong class="text-light">Data Processing:</strong> Pandas, NumPy, tldextract (Public Suffix List)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="list-unstyled text-sm text-muted-light mb-0">
+                            <li class="mb-2"><strong class="text-light">Threat Intelligence:</strong> Google Safe Browsing v4, PhishTank, OpenPhish, Local Signatures</li>
+                            <li class="mb-2"><strong class="text-light">Frontend &amp; PWA:</strong> HTML5, CSS3, JavaScript, Bootstrap 5, Chart.js, Service Worker</li>
+                            <li class="mb-2"><strong class="text-light">Quality Assurance:</strong> pytest (45 automated unit &amp; integration tests)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

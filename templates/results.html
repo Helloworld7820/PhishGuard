@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+
+{% block title %}Security Assessment Report — PhishGuard V2{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Back to Scanner Link & Telemetry Timestamp -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-4">
+        <a href="{{ url_for('home') }}" class="btn btn-outline-cyber btn-sm d-inline-flex align-items-center gap-2">
+            <i class="bi bi-arrow-left"></i> Scan Another URL
+        </a>
+        <div class="text-2xs text-muted-dim font-mono">
+            <i class="bi bi-clock-history me-1"></i> Scan Timestamp: {{ result.scan_timestamp }}
+        </div>
+    </div>
+
+    <!-- Header Status Banner -->
+    <div class="cyber-card p-4 p-lg-5 mb-4 border-{{ result.status_color }} position-relative overflow-hidden result-hero-card">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-8">
+                <!-- Verdict & Confidence Badges -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    {% if result.verdict == 'PHISHING DETECTED' %}
+                    <span class="badge bg-danger-gradient px-3 py-2 fs-6 fw-bold text-uppercase d-inline-flex align-items-center gap-2 shadow-danger">
+                        <i class="bi bi-shield-x fs-5"></i> PHISHING DETECTED
+                    </span>
+                    {% elif result.verdict == 'SUSPICIOUS' %}
+                    <span class="badge bg-warning text-dark px-3 py-2 fs-6 fw-bold text-uppercase d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-shield-exclamation fs-5"></i> SUSPICIOUS
+                    </span>
+                    {% elif result.verdict == 'INCONCLUSIVE' %}
+                    <span class="badge bg-secondary px-3 py-2 fs-6 fw-bold text-uppercase d-inline-flex align-items-center gap-2">
+                        <i class="bi bi-question-circle fs-5"></i> INCONCLUSIVE
+                    </span>
+                    {% else %}
+                    <span class="badge bg-success-gradient px-3 py-2 fs-6 fw-bold text-uppercase d-inline-flex align-items-center gap-2 shadow-success">
+                        <i class="bi bi-shield-check fs-5"></i> NO KNOWN THREAT DETECTED
+                    </span>
+                    {% endif %}
+
+                    <span class="badge bg-cyber-pill px-3 py-2 text-xs">
+                        Confidence: <strong class="text-cyan">{{ result.confidence }}</strong>
+                    </span>
+
+                    <span class="badge bg-cyber-pill px-3 py-2 text-xs">
+                        Risk Tier: <strong class="text-{{ result.status_color }}">{{ result.risk_category }}</strong>
+                    </span>
+                </div>
+
+                <!-- Submitted URL Display (Safely Escaped) -->
+                <div class="mb-3">
+                    <span class="text-xs text-muted-dim fw-bold text-uppercase tracking-wider">Analyzed Target URL</span>
+                    <div class="url-display-box mt-1 p-3 rounded font-mono text-break">
+                        <code>{{ result.url | e }}</code>
+                    </div>
+                </div>
+
+                <!-- Registered Domain & Hostname Breakdown (Public Suffix List) -->
+                {% if result.metadata %}
+                <div class="d-flex flex-wrap align-items-center gap-3 p-2 rounded bg-cyber-darker border border-cyber-dim text-xs font-mono mb-3">
+                    <div>
+                        <span class="text-muted-dim">Hostname:</span>
+                        <strong class="text-light">{{ result.metadata.hostname or "N/A" }}</strong>
+                    </div>
+                    <span class="text-muted-dim">•</span>
+                    <div>
+                        <span class="text-muted-dim">Registered Domain (PSL):</span>
+                        <strong class="text-cyan">{{ result.metadata.registered_domain or "N/A" }}</strong>
+                    </div>
+                    {% if result.metadata.tld %}
+                    <span class="text-muted-dim">•</span>
+                    <div>
+                        <span class="text-muted-dim">TLD:</span>
+                        <span class="text-light">.{{ result.metadata.tld }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Contextual Recommendation Callout -->
+                <div class="recommendation-callout p-3 rounded border border-cyber-dim">
+                    <div class="d-flex align-items-start gap-2">
+                        <i class="bi bi-shield-shaded text-{{ result.status_color }} fs-5 flex-shrink-0 mt-1"></i>
+                        <div>
+                            <h6 class="text-xs fw-bold mb-1 text-light">Recommended Action</h6>
+                            <p class="text-sm mb-0 text-muted-light">{{ result.recommendation }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Score Gauge Card -->
+            <div class="col-lg-4 text-center">
+                <div class="risk-meter-container p-4 rounded-4 bg-cyber-darker border border-cyber-dim">
+                    <span class="text-xs text-muted-dim fw-bold text-uppercase tracking-wider d-block mb-2">Model Risk Score</span>
+                    
+                    <div class="risk-circle-gauge mx-auto my-3" data-score="{{ result.risk_score }}" data-color="{{ result.status_color }}">
+                        <div class="gauge-inner">
+                            <span class="gauge-number display-5 fw-extrabold text-{{ result.status_color }}">{{ result.risk_score }}</span>
+                            <span class="gauge-denom text-muted-dim text-xs">/ 100</span>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-muted-light mt-2">
+                        Phishing Likelihood: <strong class="text-light">{{ (result.phishing_probability * 100) | round(1) }}%</strong>
+                    </div>
+
+                    <!-- Progress Bar Representation -->
+                    <div class="progress cyber-progress mt-3" style="height: 8px;">
+                        <div class="progress-bar bg-{{ result.status_color }}"
+                             role="progressbar"
+                             style="width: {{ result.risk_score }}%;"
+                             aria-valuenow="{{ result.risk_score }}"
+                             aria-valuemin="0"
+                             aria-valuemax="100">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verdict Reasons & Supporting Evidence -->
+    <div class="cyber-card p-4 mb-4">
+        <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-cyber-dim">
+            <i class="bi bi-list-check text-cyan fs-5"></i>
+            <h5 class="fw-bold mb-0">Verdict Rationale &amp; Evidence Summary</h5>
+        </div>
+        <ul class="list-unstyled mb-0">
+            {% for reason in result.reasons %}
+            <li class="d-flex align-items-start gap-2 mb-2 text-sm text-muted-light">
+                <i class="bi bi-arrow-right-circle text-cyan mt-1 flex-shrink-0"></i>
+                <div>{{ reason }}</div>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Threat Intelligence & Domain Signals Grid -->
+    <div class="row g-4 mb-4">
+        <!-- Threat Intelligence Feed Results -->
+        <div class="col-lg-7">
+            <div class="cyber-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-globe-americas text-cyan fs-5"></i>
+                        <h5 class="fw-bold mb-0">Threat Intelligence Providers</h5>
+                    </div>
+                    <span class="badge bg-cyber-pill text-xs">
+                        {{ result.threat_intelligence.providers_checked }} Checked • {{ result.threat_intelligence.providers_unconfigured }} Unconfigured
+                    </span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-dark table-cyber table-hover align-middle mb-0 text-xs">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-muted-dim">Provider</th>
+                                <th class="text-uppercase text-muted-dim">Status</th>
+                                <th class="text-uppercase text-muted-dim">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in result.threat_intelligence.provider_results %}
+                            <tr>
+                                <td class="fw-bold text-light font-mono">{{ p.provider }}</td>
+                                <td>
+                                    {% if p.status == 'match' %}
+                                    <span class="badge bg-danger text-uppercase">Match (Threat)</span>
+                                    {% elif p.status == 'clean' %}
+                                    <span class="badge bg-success text-uppercase">Clean</span>
+                                    {% elif p.status == 'unconfigured' %}
+                                    <span class="badge bg-secondary text-uppercase">Unconfigured</span>
+                                    {% elif p.status == 'rate_limited' %}
+                                    <span class="badge bg-warning text-dark text-uppercase">Rate Limited</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary text-uppercase">{{ p.status }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-muted-light">{{ p.details }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Domain & Certificate Signals -->
+        <div class="col-lg-5">
+            <div class="cyber-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-patch-check text-cyan fs-5"></i>
+                        <h5 class="fw-bold mb-0">Domain &amp; TLS Signals</h5>
+                    </div>
+                    <span class="badge bg-cyber-pill text-xs">Zero-HTTP Handshake</span>
+                </div>
+
+                <!-- DNS Status -->
+                <div class="mb-3 p-3 rounded bg-cyber-darker border border-cyber-dim">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-xs fw-bold text-light"><i class="bi bi-hdd-network text-cyan me-1"></i> DNS Resolution</span>
+                        <span class="badge bg-{{ 'success' if result.domain_signals.dns.resolved else 'secondary' }} text-2xs">
+                            {{ result.domain_signals.dns.status | upper }}
+                        </span>
+                    </div>
+                    <p class="text-2xs text-muted-light mb-1">{{ result.domain_signals.dns.details }}</p>
+                    {% if result.domain_signals.dns.ips %}
+                    <div class="font-mono text-2xs text-cyan">
+                        IPs: {{ result.domain_signals.dns.ips | join(', ') }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- TLS Status -->
+                <div class="p-3 rounded bg-cyber-darker border border-cyber-dim">
+                    <div class="d-flex align-items-center justify-content-between mb-1">
+                        <span class="text-xs fw-bold text-light"><i class="bi bi-lock-fill text-success me-1"></i> TLS Certificate</span>
+                        <span class="badge bg-{{ 'success' if result.domain_signals.tls.status == 'valid' else ('danger' if result.domain_signals.tls.status in ('expired', 'invalid_certificate') else 'secondary') }} text-2xs">
+                            {{ result.domain_signals.tls.status | upper }}
+                        </span>
+                    </div>
+                    <p class="text-2xs text-muted-light mb-1">{{ result.domain_signals.tls.details }}</p>
+                    {% if result.domain_signals.tls.available and result.domain_signals.tls.issuer %}
+                    <div class="font-mono text-2xs text-muted-dim">
+                        Issuer: <span class="text-light">{{ result.domain_signals.tls.issuer }}</span>
+                        {% if result.domain_signals.tls.days_remaining is not none %}
+                        • {{ result.domain_signals.tls.days_remaining }} days left
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Unknown / Unavailable Signals Disclosure -->
+                {% if result.unknown_signals %}
+                <div class="mt-3 pt-2 border-top border-cyber-dim">
+                    <span class="text-2xs text-muted-dim d-block mb-1">
+                        <i class="bi bi-info-circle me-1"></i> Unchecked / Unavailable Signals (Documented Uncertainty):
+                    </span>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for u in result.unknown_signals %}
+                        <span class="badge bg-cyber-pill text-2xs font-mono">{{ u }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Suspicious Indicators Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-12">
+            <div class="cyber-card p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-search text-cyan fs-5"></i>
+                        <h5 class="fw-bold mb-0">Observed Structural Indicators</h5>
+                    </div>
+                    <span class="badge bg-cyber-pill px-3 py-1 text-xs">
+                        {{ result.indicator_count }} Indicator{% if result.indicator_count != 1 %}s{% endif %} Observed
+                    </span>
+                </div>
+
+                {% if result.indicators and result.indicators | length > 0 %}
+                <div class="row g-3">
+                    {% for item in result.indicators %}
+                    <div class="col-md-6 col-lg-4">
+                        <div class="indicator-card p-3 h-100 rounded border border-cyber-dim">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                <span class="badge bg-{{ 'danger' if item.severity == 'high' else ('warning' if item.severity == 'medium' else 'info') }}-subtle text-{{ 'danger' if item.severity == 'high' else ('warning' if item.severity == 'medium' else 'cyan') }} text-2xs text-uppercase fw-bold">
+                                    {{ item.severity }} severity
+                                </span>
+                                <span class="text-2xs text-muted-dim text-uppercase font-mono">{{ item.category or "lexical" }}</span>
+                            </div>
+                            <h6 class="fw-bold text-light mb-1 fs-6">{{ item.title }}</h6>
+                            <p class="text-muted-light text-xs mb-2">{{ item.description }}</p>
+                            <div class="indicator-reason text-2xs text-muted-dim pt-2 border-top border-cyber-dim">
+                                <em>{{ item.reason }}</em>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-shield-check text-success fs-1 mb-2 d-block"></i>
+                    <h6 class="text-light fw-bold">No Anomaly Indicators Detected</h6>
+                    <p class="text-muted-dim text-xs max-w-500 mx-auto mb-0">
+                        The URL adheres to standard lexical syntax patterns and contains no known shortening, credential-masking, or IP-based anomalies.
+                    </p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Extracted Feature Summary Grid -->
+    <div class="cyber-card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-braces text-cyan fs-5"></i>
+                <h5 class="fw-bold mb-0">Extracted URL Feature Vector</h5>
+            </div>
+            <span class="text-muted-dim text-xs">16 Lexical Attributes Evaluated Deterministically</span>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-cyber table-hover align-middle mb-0 text-sm">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Feature Name</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Extracted Value</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Security Relevance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-mono text-cyan">url_length</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.url_length }} chars</span></td>
+                        <td class="text-muted-light text-xs">Phishing links frequently use lengthy strings to obscure malicious tokens.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">domain_length</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.domain_length }} chars</span></td>
+                        <td class="text-muted-light text-xs">Length of parsed netloc hostname.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">has_ip_address</td>
+                        <td>
+                            {% if result.features.has_ip_address == 1 %}
+                            <span class="badge bg-danger">1 (Yes)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (No)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Raw IP addresses bypass normal domain registration and reputation mechanisms.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">has_at_symbol</td>
+                        <td>
+                            {% if result.features.has_at_symbol == 1 %}
+                            <span class="badge bg-danger">1 (Yes)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (No)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">The '@' symbol can cause browsers to discard leading text as credentials.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">is_https</td>
+                        <td>
+                            {% if result.features.is_https == 1 %}
+                            <span class="badge bg-success">1 (HTTPS)</span>
+                            {% else %}
+                            <span class="badge bg-warning text-dark">0 (HTTP)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Transport encryption scheme. (HTTPS does not guarantee safe content).</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">suspicious_keyword_count</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.suspicious_keyword_count }}</span></td>
+                        <td class="text-muted-light text-xs">Matches against banking/auth terms (login, verify, secure, account, update).</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">subdomain_count</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.subdomain_count }}</span></td>
+                        <td class="text-muted-light text-xs">Excessive subdomain nesting is commonly used in brand impersonation.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">hyphen_in_domain</td>
+                        <td>
+                            {% if result.features.hyphen_in_domain == 1 %}
+                            <span class="badge bg-warning text-dark">1 (Present)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (None)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Hyphen combinations like 'brand-security.com' are classic typosquatting techniques.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">is_shortened</td>
+                        <td>
+                            {% if result.features.is_shortened == 1 %}
+                            <span class="badge bg-warning text-dark">1 (Shortener)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (Standard)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Services like bit.ly, tinyurl mask the final landing domain from users.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">dot_count</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.dot_count }}</span></td>
+                        <td class="text-muted-light text-xs">Total dots across the full URL path and hostname.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">digit_count</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.digit_count }}</span></td>
+                        <td class="text-muted-light text-xs">Numeric digits embedded in domain or query parameters.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">has_suspicious_port</td>
+                        <td>
+                            {% if result.features.has_suspicious_port == 1 %}
+                            <span class="badge bg-danger">1 (Non-standard)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (Default 80/443)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Custom ports (e.g., :8080, :8888) frequently indicate rogue server setups.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">has_percent_encoding</td>
+                        <td>
+                            {% if result.features.has_percent_encoding == 1 %}
+                            <span class="badge bg-warning text-dark">1 (Encoded)</span>
+                            {% else %}
+                            <span class="badge bg-cyber-pill">0 (Plain)</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted-light text-xs">Hex encoded characters (%20, %73) sometimes used to bypass superficial pattern matchers.</td>
+                    </tr>
+                    <tr>
+                        <td class="font-mono text-cyan">query_param_count</td>
+                        <td><span class="badge bg-cyber-pill font-mono">{{ result.features.query_param_count }}</span></td>
+                        <td class="text-muted-light text-xs">Total parsed key-value parameters in HTTP query string.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Security Limitations Notice -->
+    <div class="alert alert-cyber-info p-4 rounded-3 d-flex align-items-start gap-3">
+        <i class="bi bi-info-circle-fill fs-4 text-cyan flex-shrink-0 mt-1"></i>
+        <div class="text-xs text-muted-light">
+            <strong class="text-light d-block mb-1">Important Safety and Operational Notice</strong>
+            {{ result.disclaimer }} Never enter credentials or financial data on unverified websites. PhishGuard does not replace endpoint protection, endpoint threat defense, or multi-factor authentication.
+        </div>
+    </div>
+</div>
+{% endblock %}

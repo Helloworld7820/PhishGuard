@@ -1,0 +1,441 @@
+/* ==========================================================================
+   PhishGuard Cybersecurity Dashboard Stylesheet
+   Theme: High-Tech Dark Navy, Cyber Blue & Threat Alert Accents
+   ========================================================================== */
+
+:root {
+    --bg-darker: #060911;
+    --bg-dark: #0a0f1d;
+    --bg-card: #111a33;
+    --bg-card-hover: #162242;
+    --border-cyber: #1e2d4d;
+    --border-cyber-subtle: #17233c;
+    --border-cyber-dim: #1a2844;
+    
+    --cyber-cyan: #00d2ff;
+    --cyber-cyan-glow: rgba(0, 210, 255, 0.35);
+    --cyber-blue: #3b82f6;
+    
+    --cyber-danger: #ef4444;
+    --cyber-danger-glow: rgba(239, 68, 68, 0.35);
+    
+    --cyber-success: #10b981;
+    --cyber-success-glow: rgba(16, 185, 129, 0.35);
+    
+    --cyber-warning: #f59e0b;
+    
+    --text-primary: #f8fafc;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+.font-mono, code {
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
+}
+
+/* Cyber Accent Top Bar */
+.cyber-accent-bar {
+    height: 3px;
+    background: linear-gradient(90deg, #00d2ff 0%, #3b82f6 50%, #10b981 100%);
+    width: 100%;
+}
+
+/* Navbar */
+.bg-cyber-nav {
+    background-color: rgba(10, 15, 29, 0.88);
+    backdrop-filter: blur(12px);
+}
+
+.text-cyber-glow {
+    color: #ffffff;
+    letter-spacing: -0.02em;
+}
+
+.brand-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+}
+
+.nav-link {
+    color: var(--text-muted) !important;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.nav-link:hover, .nav-link.active {
+    color: var(--cyber-cyan) !important;
+}
+
+.status-indicator-pill {
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--cyber-success);
+    box-shadow: 0 0 8px var(--cyber-success);
+    display: inline-block;
+    animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+/* Hero Section */
+.hero-heading {
+    letter-spacing: -0.03em;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #00d2ff 0%, #3b82f6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.cyber-glow-bg {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    border-radius: 50%;
+    filter: blur(120px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.22;
+}
+
+.cyber-glow-bg.top-left {
+    top: -100px;
+    left: -100px;
+    background: radial-gradient(circle, #00d2ff, transparent 70%);
+}
+
+.cyber-glow-bg.bottom-right {
+    bottom: -100px;
+    right: -100px;
+    background: radial-gradient(circle, #3b82f6, transparent 70%);
+}
+
+.inline-badge {
+    display: inline-flex;
+    align-items: center;
+    background: rgba(0, 210, 255, 0.08);
+    border: 1px solid rgba(0, 210, 255, 0.25);
+    color: var(--cyber-cyan);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+/* Cyber Cards */
+.cyber-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-cyber);
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cyber-card:hover {
+    border-color: #2b3e6b;
+}
+
+.border-danger {
+    border-color: var(--cyber-danger) !important;
+}
+
+.border-success {
+    border-color: var(--cyber-success) !important;
+}
+
+.result-hero-card.border-danger {
+    box-shadow: 0 10px 40px var(--cyber-danger-glow);
+}
+
+.result-hero-card.border-success {
+    box-shadow: 0 10px 40px var(--cyber-success-glow);
+}
+
+.feature-card {
+    background: rgba(17, 26, 51, 0.65);
+    border: 1px solid var(--border-cyber-subtle);
+    border-radius: 14px;
+    transition: all 0.25s ease;
+}
+
+.feature-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--cyber-cyan);
+    transform: translateY(-3px);
+}
+
+/* Scanner Input */
+.cyber-input-group {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-cyber);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cyber-input-group:focus-within {
+    border-color: var(--cyber-cyan);
+    box-shadow: 0 0 18px var(--cyber-cyan-glow);
+}
+
+.cyber-addon {
+    background: transparent;
+    border: none;
+    padding-left: 1.25rem;
+    padding-right: 0.5rem;
+}
+
+.cyber-input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.cyber-input:focus {
+    background: transparent;
+    color: var(--text-primary);
+    box-shadow: none;
+    border: none;
+}
+
+.cyber-input::placeholder {
+    color: var(--text-dim);
+}
+
+.btn-cyber-primary {
+    background: linear-gradient(135deg, #00d2ff 0%, #0099ff 100%);
+    color: #001026;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    margin: 6px;
+    transition: all 0.2s ease;
+}
+
+.btn-cyber-primary:hover {
+    background: linear-gradient(135deg, #33dcff 0%, #1aa3ff 100%);
+    color: #000814;
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.45);
+}
+
+.btn-sample {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-cyber);
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    border-radius: 20px;
+    padding: 0.25rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+.btn-sample:hover {
+    background: rgba(0, 210, 255, 0.1);
+    border-color: var(--cyber-cyan);
+    color: #ffffff;
+}
+
+.btn-outline-cyber {
+    background: transparent;
+    border: 1px solid var(--border-cyber);
+    color: var(--cyber-cyan);
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-cyber:hover {
+    background: rgba(0, 210, 255, 0.1);
+    border-color: var(--cyber-cyan);
+    color: #ffffff;
+}
+
+/* Badges & Pills */
+.bg-cyber-pill {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-cyber);
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.bg-danger-gradient {
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: #ffffff;
+}
+
+.bg-success-gradient {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    color: #ffffff;
+}
+
+.shadow-danger {
+    box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.shadow-success {
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* URL Display Box */
+.url-display-box {
+    background: var(--bg-darker);
+    border: 1px solid var(--border-cyber);
+    color: #38bdf8;
+    font-size: 0.95rem;
+}
+
+/* Risk Score Gauge */
+.risk-circle-gauge {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-dark);
+    position: relative;
+    border: 6px solid var(--border-cyber);
+}
+
+.risk-circle-gauge[data-color="danger"] {
+    border-color: var(--cyber-danger);
+    box-shadow: 0 0 25px var(--cyber-danger-glow);
+}
+
+.risk-circle-gauge[data-color="success"] {
+    border-color: var(--cyber-success);
+    box-shadow: 0 0 25px var(--cyber-success-glow);
+}
+
+.risk-circle-gauge[data-color="warning"] {
+    border-color: var(--cyber-warning);
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.35);
+}
+
+.gauge-inner {
+    text-align: center;
+}
+
+.gauge-number {
+    display: block;
+    line-height: 1;
+}
+
+.gauge-denom {
+    display: block;
+    margin-top: 4px;
+}
+
+.cyber-progress {
+    background: var(--bg-darker);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Indicator Cards */
+.indicator-card {
+    background: rgba(6, 9, 17, 0.7);
+    border: 1px solid var(--border-cyber);
+    transition: transform 0.2s ease;
+}
+
+.indicator-card:hover {
+    transform: translateY(-2px);
+    border-color: #29406d;
+}
+
+/* Tables */
+.table-cyber {
+    background-color: transparent !important;
+    border-color: var(--border-cyber) !important;
+}
+
+.table-cyber th {
+    background-color: rgba(6, 9, 17, 0.6) !important;
+    border-color: var(--border-cyber) !important;
+    padding: 0.75rem 1rem;
+}
+
+.table-cyber td {
+    background-color: transparent !important;
+    border-color: var(--border-cyber-dim) !important;
+    padding: 0.75rem 1rem;
+}
+
+.table-cyber tr:hover td {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+
+/* KPI Cards on Dashboard */
+.cyber-kpi-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-cyber);
+    border-radius: 12px;
+}
+
+.cyber-metric-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-cyber);
+}
+
+/* Alerts */
+.alert-danger-cyber {
+    background: rgba(239, 68, 68, 0.12);
+    border: 1px solid rgba(239, 68, 68, 0.35);
+    color: #fca5a5;
+    border-radius: 12px;
+}
+
+.alert-warning-cyber {
+    background: rgba(245, 158, 11, 0.12);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fde68a;
+    border-radius: 12px;
+}
+
+.alert-cyber-info {
+    background: rgba(0, 210, 255, 0.06);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 12px;
+}
+
+/* Helper Utilities */
+.text-cyan { color: var(--cyber-cyan) !important; }
+.text-muted-light { color: var(--text-muted) !important; }
+.text-muted-dim { color: var(--text-dim) !important; }
+.text-xs { font-size: 0.8125rem; }
+.text-2xs { font-size: 0.725rem; }
+.text-sm { font-size: 0.875rem; }
+.max-w-500 { max-width: 500px; }
+.max-w-750 { max-width: 750px; }
+.max-w-850 { max-width: 850px; }
+.max-w-950 { max-width: 950px; }
+.border-cyber-dim { border-color: var(--border-cyber-dim) !important; }
+.border-cyber-subtle { border-color: var(--border-cyber-subtle) !important; }
+.bg-cyber-darker { background-color: var(--bg-darker) !important; }
+.bg-cyber-card { background-color: var(--bg-card) !important; }

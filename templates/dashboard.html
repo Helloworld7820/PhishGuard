@@ -1,0 +1,426 @@
+{% extends "base.html" %}
+
+{% block title %}Model Metrics & Threat Intelligence Telemetry — PhishGuard V2{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-2 border-bottom border-cyber-dim">
+        <div>
+            <div class="inline-badge mb-2">
+                <i class="bi bi-shield-shaded text-cyan me-1"></i> Multi-Layer Cybersecurity Telemetry
+            </div>
+            <h2 class="fw-extrabold tracking-tight mb-1">Model Architecture, Providers &amp; Evaluation Metrics</h2>
+            <p class="text-muted-light text-sm mb-0">
+                Live threat intelligence status, model provenance, and ground-truth metrics loaded from <code class="text-cyan">reports/model_metrics.json</code>.
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ url_for('api_metrics') }}" target="_blank" class="btn btn-outline-cyber btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-filetype-json text-cyan"></i> Metrics API
+            </a>
+            <a href="{{ url_for('api_providers') }}" target="_blank" class="btn btn-outline-cyber btn-sm d-flex align-items-center gap-1">
+                <i class="bi bi-globe text-cyan"></i> Providers API
+            </a>
+        </div>
+    </div>
+
+    <!-- Threat Intelligence Providers Status Banner -->
+    <div class="cyber-card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-broadcast text-cyan fs-5"></i>
+                <h5 class="fw-bold mb-0">Threat Intelligence Providers &amp; Data Feeds</h5>
+            </div>
+            <span class="badge bg-cyber-pill text-xs">Live Adapters</span>
+        </div>
+
+        <div class="row g-3">
+            {% for prov in providers_status %}
+            <div class="col-sm-6 col-lg-3">
+                <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="text-xs fw-bold text-light">{{ prov.name }}</span>
+                        {% if prov.configured %}
+                        <span class="badge bg-success text-2xs text-uppercase">Configured</span>
+                        {% else %}
+                        <span class="badge bg-secondary text-2xs text-uppercase">Unconfigured</span>
+                        {% endif %}
+                    </div>
+                    <span class="text-2xs text-muted-dim d-block">{{ prov.type }}</span>
+                    <span class="text-2xs text-muted-light mt-1 d-block">
+                        {% if prov.configured %}
+                        <i class="bi bi-check-circle text-success me-1"></i> Active for reputation lookups
+                        {% else %}
+                        <i class="bi bi-dash-circle text-muted me-1"></i> Add key to <code>.env</code> to activate
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% if not metrics %}
+    <div class="alert alert-warning-cyber p-4 rounded-3 text-center my-5">
+        <i class="bi bi-exclamation-triangle-fill fs-2 text-warning mb-2 d-block"></i>
+        <h5 class="fw-bold text-light">No Evaluation Metrics Found</h5>
+        <p class="text-muted-light text-sm mb-3">
+            The model has not been trained yet. Please run the training pipeline to generate the evaluation dataset and metrics.
+        </p>
+        <code class="p-2 rounded bg-dark border border-cyber-dim text-cyan">python -m src.train_model</code>
+    </div>
+    {% else %}
+
+    <!-- Top Dataset Overview KPI Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-sm-6 col-lg-3">
+            <div class="cyber-kpi-card p-3 h-100">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase tracking-wider">Total Training URLs</span>
+                <h3 class="fw-extrabold text-light mt-1 mb-0">{{ metrics.dataset_statistics.total_samples }}</h3>
+                <span class="text-2xs text-muted-light mt-1 d-block">
+                    Train: {{ metrics.dataset_statistics.train_samples }} | Test: {{ metrics.dataset_statistics.test_samples }}
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="cyber-kpi-card p-3 h-100">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase tracking-wider">Phishing Samples</span>
+                <h3 class="fw-extrabold text-danger mt-1 mb-0">{{ metrics.dataset_statistics.phishing_samples }}</h3>
+                <span class="text-2xs text-muted-light mt-1 d-block">
+                    {{ ((metrics.dataset_statistics.phishing_samples / metrics.dataset_statistics.total_samples) * 100) | round(1) }}% of total dataset
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="cyber-kpi-card p-3 h-100">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase tracking-wider">Legitimate Samples</span>
+                <h3 class="fw-extrabold text-success mt-1 mb-0">{{ metrics.dataset_statistics.legitimate_samples }}</h3>
+                <span class="text-2xs text-muted-light mt-1 d-block">
+                    {{ ((metrics.dataset_statistics.legitimate_samples / metrics.dataset_statistics.total_samples) * 100) | round(1) }}% of total dataset
+                </span>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="cyber-kpi-card p-3 h-100">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase tracking-wider">Model Version &amp; Provenance</span>
+                <h4 class="fw-bold text-cyan mt-1 mb-0 text-truncate">{{ metrics.model_version or "v2.0.0" }}</h4>
+                <span class="text-2xs text-muted-light mt-1 d-block font-mono text-truncate">
+                    {{ metrics.dataset_statistics.dataset_provenance or "synthetic_demo" }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Primary Performance Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="cyber-metric-card p-3 text-center rounded border border-cyber-dim">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase">Accuracy</span>
+                <h2 class="display-6 fw-bold text-light my-1">{{ (metrics.primary_metrics.accuracy * 100) | round(2) }}%</h2>
+                <span class="text-2xs text-muted-dim">Overall Correct Ratio</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cyber-metric-card p-3 text-center rounded border border-cyber-dim">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase">Recall (Sensitivity)</span>
+                <h2 class="display-6 fw-bold text-cyan my-1">{{ (metrics.primary_metrics.recall * 100) | round(2) }}%</h2>
+                <span class="text-2xs text-muted-dim">Caught Phishing %</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cyber-metric-card p-3 text-center rounded border border-cyber-dim">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase">Precision</span>
+                <h2 class="display-6 fw-bold text-success my-1">{{ (metrics.primary_metrics.precision * 100) | round(2) }}%</h2>
+                <span class="text-2xs text-muted-dim">True Threat Reliability</span>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="cyber-metric-card p-3 text-center rounded border border-cyber-dim">
+                <span class="text-2xs text-muted-dim fw-bold text-uppercase">F1-Score</span>
+                <h2 class="display-6 fw-bold text-warning my-1">{{ (metrics.primary_metrics.f1_score * 100) | round(2) }}%</h2>
+                <span class="text-2xs text-muted-dim">Harmonic Mean</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metric Explanations Callout for College Presentation / Viva -->
+    <div class="cyber-card p-4 mb-4">
+        <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+            <i class="bi bi-mortarboard-fill text-cyan"></i>
+            Cybersecurity Evaluation Trade-offs (Defense Rationale)
+        </h5>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                    <h6 class="fw-bold text-cyan mb-1"><i class="bi bi-shield-shaded me-1"></i> Why Recall Is Vital for Defense</h6>
+                    <p class="text-muted-light text-xs mb-0">
+                        {{ metrics.metric_explanations.recall_note }}
+                        A false negative allows an active phishing page into a victim's browser, leading to potential credential compromise.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="p-3 rounded bg-cyber-darker border border-cyber-dim h-100">
+                    <h6 class="fw-bold text-success mb-1"><i class="bi bi-bell-slash me-1"></i> Why Precision Matters for Usability</h6>
+                    <p class="text-muted-light text-xs mb-0">
+                        {{ metrics.metric_explanations.precision_note }}
+                        Low precision floods users and SOC analysts with false positives, eroding trust and causing users to disregard real warnings.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section: Confusion Matrix & Feature Importance -->
+    <div class="row g-4 mb-4">
+        <!-- Confusion Matrix Visual -->
+        <div class="col-lg-5">
+            <div class="cyber-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold mb-0">Confusion Matrix</h5>
+                    <span class="badge bg-cyber-pill text-xs">Test Set: {{ metrics.dataset_statistics.test_samples }} URLs</span>
+                </div>
+                <p class="text-muted-dim text-xs mb-3">
+                    Distribution of correct versus misclassified samples on unseen test data.
+                </p>
+
+                <!-- 2x2 Matrix Grid Display -->
+                <div class="confusion-grid mb-3">
+                    <div class="row g-2 text-center text-xs">
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-cyber-darker border border-success-subtle">
+                                <span class="text-muted-dim d-block mb-1">True Negative (TN)</span>
+                                <span class="fs-4 fw-bold text-success">{{ metrics.primary_metrics.confusion_matrix.true_negative }}</span>
+                                <span class="text-2xs text-muted-dim d-block mt-1">Legitimate correctly marked</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-cyber-darker border border-danger-subtle">
+                                <span class="text-muted-dim d-block mb-1">False Positive (FP)</span>
+                                <span class="fs-4 fw-bold text-warning">{{ metrics.primary_metrics.confusion_matrix.false_positive }}</span>
+                                <span class="text-2xs text-muted-dim d-block mt-1">Legitimate falsely flagged</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-cyber-darker border border-danger-subtle">
+                                <span class="text-muted-dim d-block mb-1">False Negative (FN)</span>
+                                <span class="fs-4 fw-bold text-danger">{{ metrics.primary_metrics.confusion_matrix.false_negative }}</span>
+                                <span class="text-2xs text-muted-dim d-block mt-1">Phishing missed</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 rounded bg-cyber-darker border border-success-subtle">
+                                <span class="text-muted-dim d-block mb-1">True Positive (TP)</span>
+                                <span class="fs-4 fw-bold text-success">{{ metrics.primary_metrics.confusion_matrix.true_positive }}</span>
+                                <span class="text-2xs text-muted-dim d-block mt-1">Phishing caught</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container" style="position: relative; height: 180px;">
+                    <canvas id="confusionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Importance Horizontal Bar Chart -->
+        <div class="col-lg-7">
+            <div class="cyber-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h5 class="fw-bold mb-0">Feature Importance Breakdown</h5>
+                    <span class="badge bg-cyber-pill text-xs">Gini Impurity Reduction</span>
+                </div>
+                <p class="text-muted-dim text-xs mb-2">
+                    Relative contribution of URL features in Random Forest decision tree splits.
+                </p>
+                <div class="chart-container" style="position: relative; height: 320px;">
+                    <canvas id="featureImportanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Model Comparison Table -->
+    <div class="cyber-card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+            <div>
+                <h5 class="fw-bold mb-1">Multi-Model Algorithmic Comparison</h5>
+                <p class="text-muted-dim text-xs mb-0">
+                    Benchmarking Random Forest against Gradient Boosting, Decision Tree, and Logistic Regression on the identical stratified data split.
+                </p>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-dark table-cyber table-hover align-middle mb-0 text-sm">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Algorithm</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Accuracy</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Precision</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Recall</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">F1-Score</th>
+                        <th scope="col" class="text-uppercase text-xs text-muted-dim">Deployment Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for name, comp in metrics.model_comparison.items() %}
+                    <tr class="{% if 'Selected' in name %}table-active border-cyan{% endif %}">
+                        <td class="fw-bold {% if 'Selected' in name %}text-cyan{% else %}text-light{% endif %}">
+                            {% if 'Selected' in name %}
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            {% endif %}
+                            {{ name }}
+                        </td>
+                        <td><span class="font-mono">{{ (comp.accuracy * 100) | round(2) }}%</span></td>
+                        <td><span class="font-mono">{{ (comp.precision * 100) | round(2) }}%</span></td>
+                        <td><span class="font-mono">{{ (comp.recall * 100) | round(2) }}%</span></td>
+                        <td><span class="font-mono">{{ (comp.f1_score * 100) | round(2) }}%</span></td>
+                        <td>
+                            {% if 'Selected' in name %}
+                            <span class="badge bg-success-subtle text-success">Active Production Model</span>
+                            {% else %}
+                            <span class="badge bg-secondary-subtle text-muted">Baseline Comparison</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scan Telemetry & Local History Section -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+            <div class="cyber-card p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="bi bi-pie-chart-fill text-cyan"></i>
+                    Scan Verdict Distribution
+                </h5>
+                <p class="text-muted-dim text-xs mb-3">
+                    Aggregated real-time verdicts across recent scans recorded on this instance.
+                </p>
+                <div class="p-3 rounded bg-cyber-darker border border-cyber-dim mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-xs text-muted-light">Total Scans Recorded:</span>
+                        <strong class="text-light fs-5">{{ scan_stats.total_scans }}</strong>
+                    </div>
+                    <div class="progress cyber-progress mb-3" style="height: 6px;">
+                        <div class="progress-bar bg-cyan" style="width: 100%;"></div>
+                    </div>
+                    <div class="text-2xs text-muted-dim">
+                        <div class="d-flex justify-content-between py-1 border-bottom border-cyber-dim">
+                            <span class="text-danger">Phishing Detected:</span>
+                            <strong class="text-light">{{ scan_stats.verdicts['PHISHING DETECTED'] or 0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1 border-bottom border-cyber-dim">
+                            <span class="text-warning">Suspicious:</span>
+                            <strong class="text-light">{{ scan_stats.verdicts['SUSPICIOUS'] or 0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1 border-bottom border-cyber-dim">
+                            <span class="text-success">No Known Threat:</span>
+                            <strong class="text-light">{{ scan_stats.verdicts['NO KNOWN THREAT DETECTED'] or 0 }}</strong>
+                        </div>
+                        <div class="d-flex justify-content-between py-1">
+                            <span class="text-muted-light">Inconclusive:</span>
+                            <strong class="text-light">{{ scan_stats.verdicts['INCONCLUSIVE'] or 0 }}</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="cyber-card p-4 h-100">
+                <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-cyber-dim">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-clock-history text-cyan fs-5"></i>
+                        <h5 class="fw-bold mb-0">Recent Local Scan Log (Privacy-Sanitized)</h5>
+                    </div>
+                    <button id="clearHistoryBtn" class="btn btn-outline-danger btn-sm text-2xs py-1 px-2 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-trash"></i> Clear Log
+                    </button>
+                </div>
+                <p class="text-muted-dim text-2xs mb-2">
+                    Sensitive tokens, credentials, and authentication parameters are automatically redacted before storage.
+                </p>
+
+                <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+                    <table class="table table-dark table-cyber table-hover align-middle mb-0 text-xs">
+                        <thead>
+                            <tr>
+                                <th class="text-uppercase text-muted-dim">Target URL</th>
+                                <th class="text-uppercase text-muted-dim">Verdict</th>
+                                <th class="text-uppercase text-muted-dim">Risk Score</th>
+                                <th class="text-uppercase text-muted-dim">Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scanHistoryBody">
+                            {% if scan_history and scan_history | length > 0 %}
+                            {% for item in scan_history[:10] %}
+                            <tr>
+                                <td class="font-mono text-break text-cyan" style="max-width: 280px;">{{ item.url }}</td>
+                                <td>
+                                    <span class="badge bg-{{ item.status_color }} text-2xs text-uppercase">{{ item.verdict }}</span>
+                                </td>
+                                <td class="font-mono">{{ item.risk_score }}/100</td>
+                                <td class="text-muted-dim text-2xs font-mono">{{ item.timestamp[:19].replace('T', ' ') }}</td>
+                            </tr>
+                            {% endfor %}
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-3 text-muted-dim">No scans recorded yet. Use the scanner to analyze links.</td>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dataset Integrity and Limitations Notice -->
+    <div class="alert alert-cyber-info p-4 rounded-3">
+        <div class="d-flex align-items-start gap-3">
+            <i class="bi bi-database-fill-lock text-cyan fs-4 flex-shrink-0 mt-1"></i>
+            <div>
+                <h6 class="fw-bold text-light mb-1">Dataset Integrity &amp; Transparency Statement</h6>
+                <p class="text-muted-light text-xs mb-2">
+                    {% if metrics.dataset_statistics.is_synthetic %}
+                    <strong>Synthetic Demonstration Dataset in Use:</strong> This instance is currently operating on a synthetic baseline designed for presentations and offline testing without live malware exposure. Scores reflect pattern recognition on synthesized syntactic structures and must not be cited as real-world in-the-wild detection accuracy.
+                    {% else %}
+                    <strong>External Real-World Dataset in Use:</strong> This instance is operating on imported real-world URL data. Deduplication and stratified splitting were applied to prevent data leakage.
+                    {% endif %}
+                </p>
+                <div class="text-2xs text-muted-dim">
+                    <i class="bi bi-info-circle me-1"></i> PhishGuard supports seamless ingestion of real-world datasets (e.g., PhishTank, Kaggle) using <code>python -c "from src.dataset_utils import import_external_dataset; import_external_dataset('external.csv')"</code> followed by retraining.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Raw Data for Chart.js Scripting -->
+    <div id="chartDataContainer"
+         data-cm-tn="{{ metrics.primary_metrics.confusion_matrix.true_negative }}"
+         data-cm-fp="{{ metrics.primary_metrics.confusion_matrix.false_positive }}"
+         data-cm-fn="{{ metrics.primary_metrics.confusion_matrix.false_negative }}"
+         data-cm-tp="{{ metrics.primary_metrics.confusion_matrix.true_positive }}"
+         data-features='{{ metrics.feature_importance | tojson }}'
+         class="d-none">
+    </div>
+
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
